@@ -1,0 +1,24 @@
+<launch>
+    <!-- <param name="use_sim_time" value="true"/> -->
+    <!-- <include file="$(find simple_nav)/launch/localization.launch"/> -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base1" output="screen" clear_params="true" args="/map:=prior_map /odom:=Odometry">
+        <param name="tf_lookup_timeout" value="0.5" />
+        <rosparam file="$(find simple_nav)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find simple_nav)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find simple_nav)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find simple_nav)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find simple_nav)/param/move_base.yaml" command="load" />
+        <rosparam file="$(find simple_nav)/param/dwa_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find simple_nav)/param/global_planner_params.yaml" command="load"/>
+        
+    </node>
+    <node pkg="simple_nav" type="trans_tf_2d_odom" name="trans_tF_2d_odom" />
+    <node pkg="simple_nav" type="trans_tf_2d_base_link" name="trans_tF_2d_base_link" />
+
+	<include file="$(find simple_nav)/launch/PointsCloud2toLaserscan.launch">
+	</include>
+
+    <group if="$(arg rviz)">
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="nav_rviz" args="-d $(find simple_nav)/rviz_cfg/navigation.rviz" />
+    </group>
+</launch>
